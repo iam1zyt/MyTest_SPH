@@ -1,6 +1,6 @@
 <template>
   <div>
-    搜索
+    <TypeNav></TypeNav>
   </div>
 </template>
 

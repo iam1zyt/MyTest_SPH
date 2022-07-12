@@ -3,39 +3,61 @@
   <div class="type-nav">
     <div class="container">
       <!-- 事件委派 事件代理 -->
-      <div @mouseleave="leave">
-      <h2 class="all">全部商品分类</h2>
-      <!-- 三级联动 -->
-       <div class="sort">
-        <div class="all-sort-list2" @click="goSearch">
-          <div 
-          class="item" 
-          v-for="(c1,index) in categoryList" 
-          :key="c1.categoryId" 
-          :class="{cur:currentIndex == index}">
-            <h3 @mouseenter="changeIndex(index)" >
-              <a :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{c1.categoryName}}</a>
-            </h3>
-            <!-- 二级、三级 -->
-            <div class="item-list clearfix" :style="{display:currentIndex==index?'block':'none'}">
-              <div class="subitem" v-for="c2 in c1.categoryChild" :key="c2.categoryID">
-                <dl class="fore">
-                  <dt>
-                    <a :data-categoryName="c2.categoryName" :data-category2Id="c2.categoryId">{{c2.categoryName}}</a>
-                    <!-- <router-link to="/search">{{c2.categoryName}}</router-link> -->
-                  </dt>
-                  <dd>
-                    <em v-for="c3 in c2.categoryChild" :key="c3.categoryID">
-                      <a :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{c3.categoryName}}</a>
-                      <!-- <router-link to="/search">{{c3.categoryName}}</router-link> -->
-                    </em>
-                  </dd>
-                </dl>
+      <div @mouseleave="leave" @mouseenter="enterShow">
+        <h2 class="all">全部商品分类</h2>
+        <!-- 三级联动 -->
+        <transition name="sort">
+          <div class="sort" v-show="show">
+            <div class="all-sort-list2" @click="goSearch">
+              <div
+                class="item"
+                v-for="(c1, index) in categoryList"
+                :key="c1.categoryId"
+                :class="{ cur: currentIndex == index }"
+                >
+                <h3 @mouseenter="changeIndex(index)">
+                  <a
+                    :data-categoryName="c1.categoryName"
+                    :data-category1Id="c1.categoryId"
+                    >{{ c1.categoryName }}</a
+                  >
+                </h3>
+                <!-- 二级、三级 -->
+                <div
+                  class="item-list clearfix"
+                  :style="{ display: currentIndex == index ? 'block' : 'none' }"
+                >
+                  <div
+                    class="subitem"
+                    v-for="c2 in c1.categoryChild"
+                    :key="c2.categoryID"
+                  >
+                    <dl class="fore">
+                      <dt>
+                        <a
+                          :data-categoryName="c2.categoryName"
+                          :data-category2Id="c2.categoryId"
+                          >{{ c2.categoryName }}</a
+                        >
+                        <!-- <router-link to="/search">{{c2.categoryName}}</router-link> -->
+                      </dt>
+                      <dd>
+                        <em v-for="c3 in c2.categoryChild" :key="c3.categoryID">
+                          <a
+                            :data-categoryName="c3.categoryName"
+                            :data-category3Id="c3.categoryId"
+                            >{{ c3.categoryName }}</a
+                          >
+                          <!-- <router-link to="/search">{{c3.categoryName}}</router-link> -->
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-      </div>
-    </div>
+        </transition>
       </div>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -47,67 +69,88 @@
         <a href="###">有趣</a>
         <a href="###">秒杀</a>
       </nav>
-  </div>
+    </div>
   </div>
 </template>
 
 <script>
-import {mapState} from 'vuex'
-import {throttle} from 'lodash'
+import { mapState } from "vuex";
+import { throttle } from "lodash";
 export default {
-    name:'TypeNav',
-    data() {
-      return {
-        currentIndex:-1
-      }
-    },
-    //组件挂载完毕，可以向服务器发请求
-    mounted(){
-      //通知Vuex发请求，获取数据，存储于仓库中
-      this.$store.dispatch('categoryList');
-    },
-    computed:{
-      ...mapState({
-        //右侧需要一个函数，当使用这个计算属性时，右侧函数会立即执行一次
-        //注入一个参数satte，为大仓库中的数据
-        categoryList:(state)=>{
-          return state.home.categoryList.slice(0,16)
-        }
-      })
-    },
-    methods: {
-      /* changeIndex(index){
+  name: "TypeNav",
+  data() {
+    return {
+      currentIndex: -1,
+      show: true,
+    };
+  },
+  //组件挂载完毕，可以向服务器发请求
+  mounted() {
+
+    if (this.$route.path != "/home") {
+      this.show = false;
+    }
+  },
+  computed: {
+    ...mapState({
+      //右侧需要一个函数，当使用这个计算属性时，右侧函数会立即执行一次
+      //注入一个参数satte，为大仓库中的数据
+      categoryList: (state) => {
+        return state.home.categoryList.slice(0, 16);
+      },
+    }),
+  },
+  methods: {
+    /* changeIndex(index){
         this.currentIndex = index
       }, */
-      leave(){
-        this.currentIndex =-1
-      },
-    changeIndex:throttle(function(index){
-        this.currentIndex = index;
-    },50),
-    goSearch(event){
-        //获取当前节点
-        //节点有一个dataset属性,可以获取节点的自定义属性和属性值
-        let element = event.target
-        let {categoryname,category1id,category2id,category3id}  = element.dataset;
-        if(categoryname){
-          //整理路由跳转的参数
-          let location ={name:'search'}
-          let query ={categoryName:categoryname}
-          if(category1id){
-            query.categoryId = category1id
-          }else if(category2id){
-            query.categoryId = category2id
-          }else {
-            query.categoryId = category3id
-          }
-          //整理完参数
-          location.query = query
-          //路由跳转
-          this.$router.push(location)
-        }
-    }
+    leave() {
+      this.currentIndex = -1;
+      if (this.$route.path != "/home") {
+        this.show = false;
+      }
     },
+    changeIndex: throttle(function (index) {
+      this.currentIndex = index;
+    }, 50),
+    goSearch(event) {
+      //获取当前节点
+      //节点有一个dataset属性,可以获取节点的自定义属性和属性值
+      let element = event.target;
+      let { categoryname, category1id, category2id, category3id } =
+        element.dataset;
+      if (categoryname) {
+        //整理路由跳转的参数
+        let location = { name: "search" };
+        let query = { categoryName: categoryname };
+        if (category1id) {
+          query.categoryId = category1id;
+        } else if (category2id) {
+          query.categoryId = category2id;
+        } else {
+          query.categoryId = category3id;
+        }
+        //整理完参数
+        /* location.query = query;
+        //路由跳转
+        this.$router.push(location); */
+        //如果路由跳转的时候带有params参数，也要带着传过去
+        if(this.$route.params){
+        location.params = this.$route.params
+        //动态给location配置对象添加query参数
+        location.query = query;
+        //路由跳转
+        this.$router.push(location);
+
+        }
+      }
+    },
+    enterShow() {
+      if (this.$route.path != "/home") {
+        this.show = true;
+      }
+    },
+  },
 };
 </script>
 
@@ -227,10 +270,23 @@ export default {
           //   }
           // }
         }
-        .cur{
+        .cur {
           background: skyblue;
         }
       }
+    }
+    //过渡动画的样式
+    .sort-enter{
+      height: 0px;
+      overflow: hidden;
+
+    }
+    .sort-enter-to{
+      height: 461px;
+      overflow: hidden;
+    }
+    .sort-enter-active{
+      transition: all .5s linear;
     }
   }
 }

@@ -1,11 +1,15 @@
-import { reqCategoryList } from "@/api";
+import { reqBannerList, reqCategoryList } from "@/api";
 //search模块的小仓库
 const state = {
-    categoryList:[]
+    categoryList:[],
+    bannerList:[]
 };
 const mutations = {
     CATRGORYLIST(state,categoryList){
         state.categoryList = categoryList
+    },
+    GETBANNERLIST(state,bannerList){
+        state.bannerList = bannerList
     }
 
 };
@@ -17,6 +21,13 @@ const actions = {
             commit("CATRGORYLIST",result.data);
         }
     },
+    //获取首页轮播图的数据
+    async getBannerList({commit}){
+        let result = await reqBannerList();
+        if(result.code == 200){
+            commit("GETBANNERLIST",result.data)
+        }
+    }
     
 };
 const getters = {};
