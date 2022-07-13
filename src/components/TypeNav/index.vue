@@ -124,20 +124,20 @@ export default {
         let location = { name: "search" };
         let query = { categoryName: categoryname };
         if (category1id) {
-          query.categoryId = category1id;
+          query.category1Id = category1id;
         } else if (category2id) {
-          query.categoryId = category2id;
+          query.category2Id = category2id;
         } else {
-          query.categoryId = category3id;
+          query.category3Id = category3id;
         }
         //整理完参数
         /* location.query = query;
         //路由跳转
         this.$router.push(location); */
+
         //如果路由跳转的时候带有params参数，也要带着传过去
         if(this.$route.params){
         location.params = this.$route.params
-        //动态给location配置对象添加query参数
         location.query = query;
         //路由跳转
         this.$router.push(location);

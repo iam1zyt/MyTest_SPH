@@ -6,23 +6,37 @@
     <TodayRecommend></TodayRecommend>
     <Rank></Rank>
     <Like></Like>
-    <Floor></Floor>
+    <Floor 
+    v-for="floor in floorList"
+    :key="floor.id" 
+    :list="floor"
+    />
     <Brand></Brand>
   </div>
 </template>
 
 <script>
-import ListContainer from './ListContainer'
-import TodayRecommend from './TodayRecommend'
-import Rank from './Rank'
-import Like from './Like'
-import Floor from './Floor'
-import Brand from './Brand'
+import ListContainer from "./ListContainer";
+import TodayRecommend from "./TodayRecommend";
+import Rank from "./Rank";
+import Like from "./Like";
+import Floor from "./Floor";
+import Brand from "./Brand";
+import { mapState } from "vuex";
 export default {
-components:{ListContainer,TodayRecommend,Rank,Like,Floor,Brand}
-}
+  name: "",
+  components: { ListContainer, TodayRecommend, Rank, Like, Floor, Brand },
+  mounted() {
+    //派发actions
+    this.$store.dispatch("getFloorList");
+  },
+  computed: {
+    ...mapState({
+      floorList: (state) => state.home.floorList,
+    }),
+  },
+};
 </script>
 
 <style>
-
 </style>

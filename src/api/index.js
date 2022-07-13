@@ -9,3 +9,9 @@ export const reqCategoryList = ()=>requests({url:'/api/product/getBaseCategoryLi
 
 //获取banner
 export const reqBannerList  = () =>mockRequests.get('/banner')  
+
+//获取Floor组件数据
+export const reqFloorList = () =>mockRequests.get('/floor')
+
+//获取搜索模块的数据 地址：/api/list 请求方式：post 参数：需要参数
+export const reqGetSearchList = (params) =>requests({url:'/api/list',method:'post',data:params})

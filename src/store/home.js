@@ -1,8 +1,10 @@
-import { reqBannerList, reqCategoryList } from "@/api";
+import { reqBannerList, reqCategoryList ,reqFloorList} from "@/api";
 //search模块的小仓库
 const state = {
     categoryList:[],
-    bannerList:[]
+    bannerList:[],
+    floorList:[]
+
 };
 const mutations = {
     CATRGORYLIST(state,categoryList){
@@ -10,6 +12,9 @@ const mutations = {
     },
     GETBANNERLIST(state,bannerList){
         state.bannerList = bannerList
+    },
+    GRTFLOORLIST(state,floorList){
+        state.floorList = floorList
     }
 
 };
@@ -26,6 +31,13 @@ const actions = {
         let result = await reqBannerList();
         if(result.code == 200){
             commit("GETBANNERLIST",result.data)
+        }
+    },
+    //获取floor数据
+    async getFloorList({commit}){
+        let result  = await reqFloorList();
+        if(result.code == 200){
+            commit("GRTFLOORLIST",result.data)
         }
     }
     
