@@ -161,7 +161,17 @@ export default {
   components: {
     SearchSelector,
   },
+  beforeMount() {
+    // 复杂写法
+   /*  this.searchParams.category1Id = this.$route.query.category1Id
+    this.searchParams.category2Id = this.$route.query.category2Id
+    this.searchParams.category3Id = this.$route.query.category3Id
+    this.searchParams.categoryName = this.$route.query.categoryName
+    this.searchParams.keyword = this.$route.params.keyword */
+      Object.assign(this.searchParams,this.$route.query,this.$route.params)
+  },
   mounted() {
+    //在发请求之前带给服务器的参数
     this.getDate();
   },
   computed: {
@@ -170,9 +180,15 @@ export default {
   methods: {
     //向服务器发请求获取search数据
     getDate() {
-      this.$store.dispatch("getSearchList", {});
+      this.$store.dispatch("getSearchList", this.searchParams);
     },
   },
+  watch:{
+    $route(){
+    // this.getDate();
+      
+    }
+  }
 };
 </script>
 
