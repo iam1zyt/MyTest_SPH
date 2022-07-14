@@ -10,16 +10,36 @@
               <a href="#">全部结果</a>
             </li>
           </ul>
+          <!-- 面包屑 -->
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <!-- 分类的面包屑 -->
+            <li class="with-x" v-if="searchParams.categoryName">
+              {{ searchParams.categoryName
+              }}<i @click="removeCategoryName">×</i>
+            </li>
+            <!-- 关键字的面包屑 -->
+            <li class="with-x" v-if="searchParams.keyword">
+              {{ searchParams.keyword
+              }}<i @click="removeKeyword">×</i>
+            </li>
+            <!-- 品牌的面包屑 -->
+            <li class="with-x" v-if="searchParams.trademark">
+              {{ searchParams.trademark.split(":")[1]
+              }}<i @click="removeTrademark">×</i>
+            </li>
+            <!-- 平台售卖属性值的展示 -->
+             <li class="with-x" v-for="(attrValue,index) in searchParams.props" :key="index">
+              {{ attrValue.split(":")[1]
+              }}<i @click="removeAttr(index)">×</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector
+         @trandeMarkInfo="trandeMarkInfo"
+         @attrInfo = "attrInfo"
+         />
 
         <!--details-->
         <div class="details clearfix">
@@ -150,7 +170,7 @@ export default {
         //分页器用的：代表当前第几页
         pageNo: 1,
         //代表每一页展示数据的数量
-        pageSize: 10,
+        pageSize: 3,
         //代表平台售卖属性
         props: [],
         //品牌
@@ -163,12 +183,12 @@ export default {
   },
   beforeMount() {
     // 复杂写法
-   /*  this.searchParams.category1Id = this.$route.query.category1Id
+    /*  this.searchParams.category1Id = this.$route.query.category1Id
     this.searchParams.category2Id = this.$route.query.category2Id
     this.searchParams.category3Id = this.$route.query.category3Id
     this.searchParams.categoryName = this.$route.query.categoryName
     this.searchParams.keyword = this.$route.params.keyword */
-      Object.assign(this.searchParams,this.$route.query,this.$route.params)
+    Object.assign(this.searchParams, this.$route.query, this.$route.params);
   },
   mounted() {
     //在发请求之前带给服务器的参数
@@ -182,13 +202,64 @@ export default {
     getDate() {
       this.$store.dispatch("getSearchList", this.searchParams);
     },
-  },
-  watch:{
-    $route(){
-    // this.getDate();
-      
+    removeCategoryName() {
+      this.searchParams.categoryName = undefined;
+      this.searchParams.category1Id = undefined;
+      this.searchParams.category2Id = undefined;
+      this.searchParams.category3Id = undefined;
+      this.getDate();
+      //地址栏也需要修改，进行路由跳转
+      if(this.$route.params){
+      this.$router.push({name:'search',params: this.$route.params})
+      }
+    },
+    removeKeyword(){
+      this.searchParams.keyword = undefined
+      this.getDate();
+      //通知header
+      this.$bus.$emit('clear')
+      //路由跳转
+      if(this.$route.query){
+      this.$router.push({name:'search',query: this.$route.query})
+      }
+    },
+    removeTrademark(){
+      this.searchParams.trademark =undefined
+      this.getDate()
+    },
+    //自定义事件
+    trandeMarkInfo(trademark){
+      // console.log("父组件",trademark);
+      //整理品牌名称
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`
+      //再次发请求
+      this.getDate();
+
+    },
+    attrInfo(attr,attrValue){
+      let props = `${attr.attrId}:${attrValue}:${attr.attrName}`
+      if(this.searchParams.props.indexOf(props) == -1){
+        this.searchParams.props.push(props);
+        this.getDate();
+      }
+    },
+    removeAttr(index){
+      this.searchParams.props.splice(index,1);
+        this.getDate();
+
     }
-  }
+  },
+  watch: {
+    $route() {
+      Object.assign(this.searchParams, this.$route.query, this.$route.params);
+      this.getDate();
+      //每一次请求完毕应该置空相应的一级、二级、三级ID
+
+      this.searchParams.category1Id = undefined;
+      this.searchParams.category2Id = undefined;
+      this.searchParams.category3Id = undefined;
+    },
+  },
 };
 </script>
 

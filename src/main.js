@@ -13,6 +13,9 @@ Vue.component(Carousel.name,Carousel)
 Vue.config.productionTip = false
 new Vue({
   render: h => h(App),
+  beforeCreate(){
+   Vue.prototype.$bus= this
+  },
   router,
   //组件实例的身上多了$store属性
   store
