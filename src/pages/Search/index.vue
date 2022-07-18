@@ -45,38 +45,32 @@
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
-              <!-- 价格 -->
+
+              <!-- 排序结构 -->
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{active:isOne}" @click="changeOrder('1')">
+                  <a >综合
+                    <span v-show="isOne" class="iconfont" :class="{'icon-Icon_up':isAsc,'icon-Icon_down':isDesc}"></span>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{active:isTwo} "  @click="changeOrder('2')">
+                  <a >价格
+                    <span v-show="isTwo" class="iconfont" :class="{'icon-Icon_up':isAsc,'icon-Icon_down':isDesc}"></span>
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
+
           <!-- 产品列表 -->
           <div class="goods-list">
             <ul class="yui3-g">
               <li class="yui3-u-1-5" v-for="good in goodsList" :key="good.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank">
-                      <img :src="good.defaultImg"
-                    /></a>
+                  <router-link :to="`/detail/${good.id}`">
+                      <img :src="good.defaultImg"/>
+                     </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -110,36 +104,16 @@
               </li>
             </ul>
           </div>
+
           <!-- 分页器 -->
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <!-- 测试分页器 -->
+         <!-- <Pagination :pageNo="8" :pageSize="3" :total="91" :continues="5"  @getPageNo="getPageNo"/> -->
+         <Pagination 
+         :pageNo="searchParams.pageNo" 
+         :pageSize="searchParams.pageSize" 
+         :total="total" :continues="5"
+         @getPageNo="getPageNo"
+         />
         </div>
       </div>
     </div>
@@ -148,7 +122,7 @@
 
 <script>
 import SearchSelector from "./SearchSelector/SearchSelector";
-import { mapGetters } from "vuex";
+import { mapGetters,mapState } from "vuex";
 export default {
   name: "Search",
   data() {
@@ -166,7 +140,7 @@ export default {
         //关键字
         keyword: "",
         //排序
-        order: "",
+        order: "1:desc",
         //分页器用的：代表当前第几页
         pageNo: 1,
         //代表每一页展示数据的数量
@@ -196,6 +170,21 @@ export default {
   },
   computed: {
     ...mapGetters(["goodsList"]),
+    ...mapState({
+      total:state =>state.search.searchList.total
+    }),
+    isOne(){
+      return this.searchParams.order.indexOf('1')!=-1
+    },
+    isTwo(){
+      return this.searchParams.order.indexOf('2')!=-1
+    },
+    isAsc(){
+      return this.searchParams.order.indexOf('asc')!=-1
+    },
+    isDesc(){
+      return this.searchParams.order.indexOf('desc')!=-1
+    }
   },
   methods: {
     //向服务器发请求获取search数据
@@ -238,6 +227,7 @@ export default {
     },
     attrInfo(attr,attrValue){
       let props = `${attr.attrId}:${attrValue}:${attr.attrName}`
+      // 数组去重，判断数组中有没有这个元素
       if(this.searchParams.props.indexOf(props) == -1){
         this.searchParams.props.push(props);
         this.getDate();
@@ -246,7 +236,32 @@ export default {
     removeAttr(index){
       this.searchParams.props.splice(index,1);
         this.getDate();
-
+    },
+    //排序操作
+    changeOrder(flag){
+      //flag：用户每一次点击li标签的时候，用于区分是综合还是价格
+      //获取order初始状态
+      let originOrder = this.searchParams.order;
+      let originFlag = originOrder.split(":")[0];
+      let originSort = originOrder.split(":")[1];
+      //新的排序方式
+      let newOrder = "";
+      //判断多次点击的是不是同一个按钮
+      if(flag == originFlag){
+        newOrder = `${originFlag}:${originSort == "desc"?"asc":"desc"}`;
+      }else{
+        //点击的不是同一按钮
+        newOrder = `${flag}:${"desc"}`;
+      }
+      //给order重新赋值
+      this.searchParams.order = newOrder;
+      this.getDate()
+      
+    },
+    getPageNo(pageNo){
+     console.log(pageNo);
+     this.searchParams.pageNo = pageNo;
+     this.getDate();
     }
   },
   watch: {

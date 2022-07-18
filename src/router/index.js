@@ -3,10 +3,7 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
-import Home from '@/pages/Home'
-import Login from '@/pages/Login'
-import Register from '@/pages/Register'
-import Search from '@/pages/Search'
+import  routes from './routes'
 
 let originPush = VueRouter.prototype.push;
 let originReplace =  VueRouter.prototype.replace
@@ -32,38 +29,9 @@ VueRouter.prototype.replace = function(location,resolve,reject){
 }
 export default new VueRouter({
     //配置路由
-    routes:[
-        {
-            path:"/home",
-            component:Home,
-            meta:{show:true},
-        }
-        ,
-        {
-            path:"/login",
-            component:Login,
-            meta:{show:false}
-
-        }
-        ,
-        {
-            path:"/register",
-            component:Register,
-            meta:{show:false}
-
-        }
-        ,
-        {
-            name:"search",
-            path:"/search/:keyword?",
-            component:Search,
-            meta:{show:true},
-            
-        },
-        //重定向，在项目跑起来时。访问/，立马定向到首页
-        {
-            path:'',
-            redirect:'/home'
-        }
-    ]
+    routes,
+    scrollBehavior(){
+        //y=0 代表滚动条在最上方
+        return {y:0}
+    }
 })

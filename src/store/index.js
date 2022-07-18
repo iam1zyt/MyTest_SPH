@@ -6,13 +6,18 @@ Vue.config.devtools = true
 //引入小仓库
 import home from './home'
 import search from './search'
-
+import detail from './detail'
+import shopCart from './shopCart'
+import user from './user'
 
 //对外暴露Store类的一个实例
 export default new Vuex.Store({
     //实现Vuex仓库模式开发存储数据
    modules:{
     home,
-    search
+    search,
+    detail,
+    shopCart,
+    user
    }
 })
