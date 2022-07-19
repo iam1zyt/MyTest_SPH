@@ -76,9 +76,17 @@ export default {
     }
   },
   methods:{
-    userLogin(){
-     const {phone,password} = this;
-     (phone&&password) && this.$store.dispatch('userLogin',{phone,password})
+    async userLogin(){
+     try {
+      const {phone,password} = this;
+     (phone&&password) && await this.$store.dispatch('userLogin',{phone,password})
+     //登录的路由组件：看路由当中是否包含query参数
+     let toPath = this.$route.query.redirect || '/home'
+     this.$router.push(toPath)
+     } catch (error) {
+      alert(error.message)
+      
+     }
     }
   }
 };

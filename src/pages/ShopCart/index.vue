@@ -79,13 +79,13 @@
         <a href="#none">清除下柜商品</a>
       </div>
       <div class="money-box">
-        <div class="chosed">已选择 <span>{{}}</span>件商品</div>
+        <div class="chosed">已选择 <span>{{totalNum}}</span>件商品</div>
         <div class="sumprice">
           <em>总价（不含运费） ：</em>
           <i class="summoney">{{ totalPrice }}</i>
         </div>
         <div class="sumbtn">
-          <a class="sum-btn" href="###" target="_blank">结算</a>
+          <router-link to="/trade" class="sum-btn"  >结算</router-link>
         </div>
       </div>
     </div>
@@ -207,6 +207,14 @@ export default {
       let sum = 0;
       this.cartInfoList.forEach((item) => {
         sum += item.skuNum * item.skuPrice;
+      });
+      return sum;
+    },
+    //购买商品总数
+    totalNum(){
+      let sum = 0;
+        this.cartInfoList.forEach((item) => {
+        sum += item.skuNum ;
       });
       return sum;
     },

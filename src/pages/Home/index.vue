@@ -29,6 +29,7 @@ export default {
   mounted() {
     //派发actions
     this.$store.dispatch("getFloorList");
+
   },
   computed: {
     ...mapState({
