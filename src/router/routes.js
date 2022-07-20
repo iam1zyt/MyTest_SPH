@@ -1,4 +1,4 @@
-import Home from "@/pages/Home";
+/* import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Search from "@/pages/Search";
@@ -10,20 +10,22 @@ import Pay from "@/pages/Pay";
 import PaySuccess from "@/pages/PaySuccess";
 import Center from "@/pages/Center";
 import myOrder from "@/pages/Center/myOrder";
-import groupOrder from "@/pages/Center/groupOrder";
+import groupOrder from "@/pages/Center/groupOrder"; */
+
+
 export default [
   {
     path: "/center",
-    component: Center,
+    component: ()=>import('@/pages/Center'),
     meta: { show: true },
     children: [
       {
         path: "myorder",
-        component: myOrder,
+        component: ()=>import('@/pages/Center/myOrder'),
       },
       {
         path: "grouporder",
-        component: groupOrder,
+        component: ()=>import('@/pages/Center/groupOrder'),
       },
       {
         path: "/center",
@@ -33,12 +35,12 @@ export default [
   },
   {
     path: "/paysuccess",
-    component: PaySuccess,
+    component: ()=>import('@/pages/PaySuccess'),
     meta: { show: true },
   },
   {
     path: "/pay",
-    component: Pay,
+    component: ()=>import('@/pages/Pay'),
     meta: { show: true },
      //路由独享守卫
      beforeEnter: (to, from, next) => {
@@ -51,7 +53,7 @@ export default [
   },
   {
     path: "/trade",
-    component: Trade,
+    component: ()=>import('@/pages/Trade'),
     meta: { show: true },
     //路由独享守卫
     beforeEnter: (to, from, next) => {
@@ -64,39 +66,39 @@ export default [
   },
   {
     path: "/shopcart",
-    component: ShopCart,
+    component: ()=>import('@/pages/ShopCart'),
     meta: { show: true },
   },
   {
     path: "/addCartSuccess",
     name: "addCartSuccess",
-    component: AddCartSuccess,
+    component: ()=>import('@/pages/AddCartSuccess'),
     meta: { show: true },
   },
   {
     path: "/detail/:skuId",
-    component: Detail,
+    component: ()=>import('@/pages/Detail'),
     meta: { show: true },
   },
   {
     path: "/home",
-    component: Home,
+    component: ()=>import('@/pages/Home'),//路由懒加载
     meta: { show: true },
   },
   {
     path: "/login",
-    component: Login,
+    component: ()=>import('@/pages/Login'),
     meta: { show: false },
   },
   {
     path: "/register",
-    component: Register,
+    component: ()=>import('@/pages/Register'),
     meta: { show: false },
   },
   {
     name: "search",
     path: "/search/:keyword?",
-    component: Search,
+    component: ()=>import('@/pages/Search'),
     meta: { show: true },
   },
   //重定向，在项目跑起来时。访问/，立马定向到首页

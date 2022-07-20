@@ -42,6 +42,7 @@ const actions = {
   //用户注册
   async userRegister({ commit }, user) {
     let result = await reqUserRegister(user);
+    console.log(result);
     if (result.code == 200) {
       return "ok";
     } else {

@@ -30,6 +30,14 @@ Vue.use(VueLazyload,{
   loading:img
 })
 
+//引入自定义插件
+import myPlugins from "./plugins/myPlugins";
+Vue.use(myPlugins,{
+  name:'option444'
+})
+
+//引入表单检验插件
+import '@/plugins/validate'
 
 //统一接收api文件夹里的全部请求函数
 import * as API from "@/api";
